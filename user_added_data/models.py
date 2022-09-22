@@ -5,11 +5,11 @@ from hacker_news_generated_data.models import NewsBaseClass
 
 
 
-
 def createID():
     id = uuid1().int >> 64
     id = id / 2.5
     return abs(int(id))
+
 
 
 class User(models.Model):
@@ -18,6 +18,10 @@ class User(models.Model):
     email = models.EmailField(unique=True)
     password = models.TextField(serialize=False)
     date_created = models.DateTimeField(auto_now_add=True)
+
+
+    def natural_key(self):
+        return (self.name)
     
     def __str__(self) -> str:
         return self.name

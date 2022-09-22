@@ -15,7 +15,6 @@ Including another URLconf
 """
 
 from django.urls import path
-from django.views.generic import TemplateView
 from user_added_data.views import AllArticles, Comments, Account, SignIn, UserRelatedActivities
 
 urlpatterns = [
@@ -24,5 +23,4 @@ urlpatterns = [
     path("api/v0/comments/", Comments.as_view(), name="comments"),
     path("api/v0/myarticles/", UserRelatedActivities.as_view(), name="user-related-activities"),
     path("api/v0/signin/", SignIn.as_view(), name="signin"),
-    path("", TemplateView.as_view(template_name = "index.html"))
 ]
