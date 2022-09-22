@@ -96,11 +96,9 @@ class Queries():
 
         def story(commentID) -> dict:
 
-            commentID = int(commentID)
-
-            if commentID > 100000000000:
+            if int(commentID) > 100000000000:
                 try:
-                    queryset = UserPosts.objects.filter(id = commentID)
+                    queryset = UserPosts.objects.filter(id = int(commentID))
                     querysetSerialized = serialize(
                         "json",
                         queryset,
@@ -125,7 +123,7 @@ class Queries():
             else:
                 try:
                     response = get(f"{HN_URL}/v0/item/{commentID}.json")
-                    data = json.loads(response.text)
+                    data = [json.loads(response.text)]
                     return data
 
                 except:
@@ -140,7 +138,7 @@ class Queries():
 
         with ThreadPoolExecutor(max_workers=20) as executor:
             try:
-                for commentID in parentComment["kids"]:
+                for commentID in parentComment[0]["kids"]:
                     executor.submit(getComments, commentID)
 
                 return parentComment, data

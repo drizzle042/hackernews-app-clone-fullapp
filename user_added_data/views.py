@@ -1,3 +1,4 @@
+from itertools import chain
 import json
 from urllib import response
 import jwt
@@ -110,7 +111,7 @@ class Comments(View):
         payload["totalDocs"] = len(query[1])
         payload["data"] = {
             "parent": query[0],
-            "comments": query[1]
+            "comments": list(chain.from_iterable(query[1]))
             }
 
         return JsonResponse(payload)
