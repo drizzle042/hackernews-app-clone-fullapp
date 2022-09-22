@@ -75,6 +75,8 @@ class Queries():
         data = serialize(
             "json",
             paginator.page(page).object_list, 
+            use_natural_foreign_keys=True, 
+            use_natural_primary_keys=True, 
             fields=(
                 "title", 
                 "type", 
@@ -94,13 +96,40 @@ class Queries():
 
         def story(commentID) -> dict:
 
-            try:
-                response = get(f"{HN_URL}/v0/item/{commentID}.json")
-                data = json.loads(response.text)
-                return data
+            commentID = int(commentID)
 
-            except:
-                raise ConnectionError
+            if commentID > 100000000000:
+                try:
+                    queryset = UserPosts.objects.filter(id = commentID)
+                    querysetSerialized = serialize(
+                        "json",
+                        queryset,
+                        use_natural_foreign_keys=True, 
+                        use_natural_primary_keys=True, 
+                        fields=(
+                            "title", 
+                            "type", 
+                            "by", 
+                            "time", 
+                            "text", 
+                            "url",
+                            "score",
+                            "kids"
+                        ))
+                    data = json.loads(querysetSerialized)
+                    return data
+
+                except ObjectDoesNotExist:
+                    return ObjectDoesNotExist
+
+            else:
+                try:
+                    response = get(f"{HN_URL}/v0/item/{commentID}.json")
+                    data = json.loads(response.text)
+                    return data
+
+                except:
+                    raise ConnectionError
 
 
         parentComment = story(id)
@@ -117,6 +146,9 @@ class Queries():
                 return parentComment, data
 
             except KeyError:
+                return parentComment, data
+                
+            except TypeError:
                 return parentComment, data
 
 
@@ -206,6 +238,8 @@ class UserRelatedQueries():
         data = serialize(
             "json",
             paginator.page(page).object_list, 
+            use_natural_foreign_keys=True, 
+            use_natural_primary_keys=True, 
             fields=(
                 "title", 
                 "type", 
@@ -230,6 +264,7 @@ class UserRelatedQueries():
 
         user = kwargs["user"]
         post_to_delete = kwargs["post_to_delete"]
+        post_to_delete = int(post_to_delete)
 
         try:
             queryset = UserPosts.objects.get(by=user, id=post_to_delete)

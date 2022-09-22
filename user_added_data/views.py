@@ -96,6 +96,16 @@ class Comments(View):
 
             return response
 
+        except ObjectDoesNotExist:
+            response = JsonResponse({
+                    "status": "Not Found", 
+                    "message": "Oops the comment you tried to view couldn't be found. It seemes it has been deleted."
+                    })
+            response.status_code = 404
+            response.reason_phrase = "Not Found"
+
+            return response
+
         # Payload
         payload["totalDocs"] = len(query[1])
         payload["data"] = {
@@ -121,19 +131,21 @@ class Account(View):
 
         except DecodeError:
             response = JsonResponse({
-                "status": "Unauthorized",
+                "status": "Couldn't authenticate",
                 "message": "Authorization required. You are unauthorized. The problem could be that your auth token is missing or has been tampered with. To get a new token, signin."
             })
             response.status_code = 401
+            response.reason_phrase = "We couldn't verify you"
 
             return response
 
         except ExpiredSignatureError:
             response = JsonResponse({
-                "status": "Unauthorized",
+                "status": "Couldn't authenticate",
                 "message": "Authorization required. You are unauthorized. Your auth token has expired. To get a new token, signin."
             })
             response.status_code = 401
+            response.reason_phrase = "We couldn't verify you"
 
             return response
 
@@ -207,7 +219,7 @@ class Account(View):
         except IntegrityError:
             response = JsonResponse({
                     "status": "Bad request. User already exists!", 
-                    "message": "The email you tried to sign up with already exists. Emails are usually unique so trace your steps back to know where the problem lies."
+                    "message": "An account has already been created with this email. If this was you, don't worry just sign in."
                     })
             response.status_code = 400
             response.reason_phrase = "Bad request. User already exists!"
@@ -354,13 +366,13 @@ class UserRelatedActivities(View):
             # To get the current active user
             user = AccountControl.get_user_model_object(user_to_get_payload)
 
-            
         except ObjectDoesNotExist:
             response = JsonResponse({
                 "status": "Forbidden. Couldn't authenticate",
                 "message": "We could not find any posts that belong to you because we could not recognize you. Try signin back in or create a new account."
             })
             response.status_code = 403
+            response.reason_phrase = "You are not authenticated so you can't see your posts. Please signin."
 
             return response
 
@@ -446,6 +458,7 @@ class UserRelatedActivities(View):
                 "message": "You do not have rights to post articles at the moment because we could not recognize you. Try signin back in or create a new account."
             })
             response.status_code = 403
+            response.reason_phrase = "You are not allowed to do this. Please signin."
 
             return response
 
@@ -478,6 +491,7 @@ class UserRelatedActivities(View):
                 "message": "We could not find any posts that belong to you because we could not recognize you. Try signin back in or create a new account."
             })
             response.status_code = 403
+            response.reason_phrase = "You are not allowed to be here. Please signin."
 
             return response
 

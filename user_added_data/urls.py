@@ -24,5 +24,5 @@ urlpatterns = [
     path("api/v0/comments/", Comments.as_view(), name="comments"),
     path("api/v0/myarticles/", UserRelatedActivities.as_view(), name="user-related-activities"),
     path("api/v0/signin/", SignIn.as_view(), name="signin"),
-    path("", TemplateView.as_view(template_name = "index.html"))
+    path("", TemplateView.as_view(template_name = "index.html"), name="home"),
 ]
