@@ -1,5 +1,5 @@
 """
-WSGI config for Python_interview_test project.
+WSGI config for hackernews-app-clone-fullapp project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Python_interview_test.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hackernews-app-clone-fullapp.settings')
 
 application = get_wsgi_application()
